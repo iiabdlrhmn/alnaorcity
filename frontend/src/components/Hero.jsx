@@ -1,16 +1,38 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import gsap from 'gsap';
 import { Draggable } from 'gsap/Draggable';
 import { useGSAP } from '@gsap/react';
 import canImg from '@assets/photos/can.png';
 import bgLeavesImg from '@assets/photos/fresh-green-tea-leaves-lush-plantation.jpg';
+import secondPhotoImg from '@assets/photos/second_photo.jpg';
+import thirdPhotoImg from '@assets/photos/third_photo.jpg';
 import taglineMapImg from '@assets/photos/taglinewithmap.png';
 
 gsap.registerPlugin(Draggable);
 
+const SLIDES = [
+  {
+    id: 0,
+    image: bgLeavesImg,
+    alt: 'Fresh Green Tea Leaves Plantation - Al-Khan Tea',
+  },
+  {
+    id: 1,
+    image: secondPhotoImg,
+    alt: 'Al-Khan Tea Fleet & Distribution Truck',
+  },
+  {
+    id: 2,
+    image: thirdPhotoImg,
+    alt: 'Al-Khan Tea Team & Community Reach',
+  },
+];
+
+const AUTO_CYCLE_MS = 5000;
+
 export default function Hero() {
   const heroRef = useRef(null);
-  const bgRef = useRef(null);
+  const slideImgRefs = useRef([]);
   const canWrapperRef = useRef(null);
   const canInnerRef = useRef(null);
   const shadowRef = useRef(null);
@@ -22,26 +44,73 @@ export default function Hero() {
   const [isDragging, setIsDragging] = useState(false);
   const [isWaitingToReturn, setIsWaitingToReturn] = useState(false);
 
+  // Transition between the 3 background photos while keeping Tea Can & Iraq Map on top
+  const goToSlide = useCallback(
+    (nextIndex) => {
+      if (nextIndex === activeSlide) return;
+
+      const prevImg = slideImgRefs.current[activeSlide];
+      const nextImg = slideImgRefs.current[nextIndex];
+
+      // Crossfade & subtle Ken Burns effect on background images
+      if (prevImg) {
+        gsap.to(prevImg, {
+          opacity: 0,
+          scale: 1.08,
+          duration: 1.2,
+          ease: 'power2.inOut',
+          overwrite: 'auto',
+        });
+      }
+
+      if (nextImg) {
+        gsap.fromTo(
+          nextImg,
+          { opacity: 0, scale: 1.12 },
+          {
+            opacity: 1,
+            scale: 1.02,
+            duration: 1.4,
+            ease: 'power2.out',
+            overwrite: 'auto',
+          }
+        );
+      }
+
+      setActiveSlide(nextIndex);
+    },
+    [activeSlide]
+  );
+
   useGSAP(
     () => {
+      // Initialize slide opacities
+      slideImgRefs.current.forEach((img, idx) => {
+        if (!img) return;
+        gsap.set(img, {
+          opacity: idx === 0 ? 1 : 0,
+          scale: idx === 0 ? 1.03 : 1.1,
+        });
+      });
+
       // 1. Entrance animations
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
       tl.fromTo(
-        bgRef.current,
+        slideImgRefs.current[0],
         { scale: 1.14, filter: 'brightness(0.7)' },
-        { scale: 1.03, filter: 'brightness(1)', duration: 2.2, ease: 'power2.out' }
+        { scale: 1.02, filter: 'brightness(1)', duration: 2.0, ease: 'power2.out' }
       )
         .fromTo(
           canWrapperRef.current,
           { y: 70, opacity: 0, scale: 0.88 },
           { y: 0, opacity: 1, scale: 1, duration: 1.1, ease: 'back.out(1.4)' },
-          '-=1.7'
+          '-=1.5'
         )
         .fromTo(
           mapWrapperRef.current,
           { x: 50, opacity: 0, scale: 0.94 },
-          { x: 0, opacity: 1, scale: 1, duration: 1.2 },
+          { x: 0, opacity: 1, scale: 1, duration: 1.1 },
           '-=0.9'
         )
         .fromTo(
@@ -114,7 +183,6 @@ export default function Hero() {
         onRelease() {
           setIsDragging(false);
 
-          // Settle tilt slightly while waiting in new spot
           gsap.to(canInnerRef.current, {
             rotation: 0,
             scale: 1.02,
@@ -122,7 +190,6 @@ export default function Hero() {
             ease: 'power2.out',
           });
 
-          // If barely moved, snap back immediately
           if (Math.abs(this.x) < 4 && Math.abs(this.y) < 4) {
             gsap.to(canWrapperRef.current, {
               x: 0,
@@ -171,100 +238,72 @@ export default function Hero() {
     { scope: heroRef }
   );
 
-  // Subtle mouse-move parallax for background and map outline
+  // Automatic cycling across all 3 photos
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const next = (activeSlide + 1) % SLIDES.length;
+      goToSlide(next);
+    }, AUTO_CYCLE_MS);
+
+    return () => clearTimeout(timer);
+  }, [activeSlide, goToSlide]);
+
+  // Subtle mouse-move parallax for active background and map outline
   const handleMouseMove = (e) => {
     if (!heroRef.current) return;
     const rect = heroRef.current.getBoundingClientRect();
     const relX = (e.clientX - rect.left) / rect.width - 0.5;
     const relY = (e.clientY - rect.top) / rect.height - 0.5;
 
-    gsap.to(bgRef.current, {
-      x: relX * -18,
-      y: relY * -18,
-      duration: 1.2,
-      ease: 'power2.out',
-    });
+    const currentBg = slideImgRefs.current[activeSlide];
+    if (currentBg) {
+      gsap.to(currentBg, {
+        x: relX * -16,
+        y: relY * -16,
+        duration: 1.2,
+        ease: 'power2.out',
+      });
+    }
 
-    gsap.to(mapWrapperRef.current, {
-      x: relX * 16,
-      y: relY * 12,
-      duration: 1.0,
-      ease: 'power2.out',
-    });
-  };
-
-  // Slide change animation when clicking bottom dots
-  const handleSlideChange = (index) => {
-    if (index === activeSlide) return;
-    setActiveSlide(index);
-
-    // Subtle visual transition for background & map
-    const bgTransforms = [
-      { scale: 1.03, filter: 'brightness(1) saturate(1)' },
-      { scale: 1.08, filter: 'brightness(0.95) saturate(1.12)' },
-      { scale: 1.05, filter: 'brightness(1.04) saturate(1.05)' },
-    ];
-
-    gsap.to(bgRef.current, {
-      ...bgTransforms[index],
-      duration: 1.1,
-      ease: 'power2.inOut',
-    });
-
-    gsap.fromTo(
-      mapWrapperRef.current,
-      { opacity: 0.35, scale: 0.96, y: 12 },
-      { opacity: 1, scale: 1, y: 0, duration: 0.75, ease: 'power3.out' }
-    );
-
-    if (!isDragging && !isWaitingToReturn) {
-      gsap.fromTo(
-        canInnerRef.current,
-        { scale: 0.94 },
-        { scale: 1, duration: 0.65, ease: 'elastic.out(1.1, 0.5)' }
-      );
+    if (mapWrapperRef.current) {
+      gsap.to(mapWrapperRef.current, {
+        x: relX * 16,
+        y: relY * 12,
+        duration: 1.0,
+        ease: 'power2.out',
+      });
     }
   };
-
-  // Optional auto-cycle slides every 8 seconds unless user is dragging
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!isDragging && !isWaitingToReturn) {
-        setActiveSlide((prev) => {
-          const next = (prev + 1) % 3;
-          return next;
-        });
-      }
-    }, 9000);
-    return () => clearInterval(interval);
-  }, [isDragging, isWaitingToReturn]);
 
   return (
     <section
       ref={heroRef}
       onMouseMove={handleMouseMove}
-      className="relative w-full h-[640px] sm:h-[700px] lg:h-[760px] pt-24 sm:pt-28 overflow-hidden select-none bg-[#0d2607]"
+      className="relative w-full h-[640px] sm:h-[700px] lg:h-[780px] pt-24 sm:pt-28 overflow-hidden select-none bg-[#0d2607]"
     >
-      {/* Background Tea Leaves Image */}
-      <img
-        ref={bgRef}
-        src={bgLeavesImg}
-        alt="Fresh Green Tea Leaves Plantation"
-        className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none will-change-transform"
-        draggable={false}
-      />
+      {/* 3 Background Slide Photos */}
+      {SLIDES.map((slide, idx) => (
+        <img
+          key={slide.id}
+          ref={(el) => (slideImgRefs.current[idx] = el)}
+          src={slide.image}
+          alt={slide.alt}
+          className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none will-change-transform"
+          draggable={false}
+        />
+      ))}
 
       {/* Subtle Vignette, Top Header Readability Gradient & Bottom Shadow Overlay */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none z-10"
         style={{
           background:
-            'linear-gradient(to bottom, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0) 22%), radial-gradient(circle at 55% 45%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.42) 100%), linear-gradient(to top, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.12) 28%, rgba(0,0,0,0) 60%)',
+            'linear-gradient(to bottom, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.08) 25%), radial-gradient(circle at 55% 45%, rgba(0,0,0,0.12) 35%, rgba(0,0,0,0.45) 100%), linear-gradient(to top, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.14) 28%, rgba(0,0,0,0) 58%)',
         }}
       />
 
-      {/* Main Content Container */}
-      <div className="relative z-10 max-w-[1400px] mx-auto w-full h-full flex flex-col md:flex-row items-center justify-between px-6 sm:px-12 lg:px-20">
+      {/* Foreground Content Always on Top: Draggable Tea Jar + Iraq Map Outline */}
+      <div className="relative z-20 max-w-[1400px] mx-auto w-full h-full flex flex-col md:flex-row items-center justify-between px-6 sm:px-12 lg:px-20">
         {/* Left: Draggable Al-Khan Tea Jar */}
         <div className="relative flex items-center justify-center md:w-[42%] h-full pt-4 md:pt-0">
           <div
@@ -306,18 +345,18 @@ export default function Hero() {
       </div>
 
       {/* Bottom Center Slider Dots (● ○ ○) */}
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3.5">
-        {[0, 1, 2].map((idx) => {
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3.5">
+        {SLIDES.map((slide, idx) => {
           const isActive = activeSlide === idx;
           return (
             <button
-              key={idx}
+              key={slide.id}
               type="button"
-              onClick={() => handleSlideChange(idx)}
+              onClick={() => goToSlide(idx)}
               aria-label={`Slide ${idx + 1}`}
               className={`hero-dot w-3.5 h-3.5 rounded-full border-[2px] border-white transition-all duration-300 cursor-pointer ${
                 isActive
-                  ? 'bg-white scale-110 shadow-[0_0_8px_rgba(255,255,255,0.8)]'
+                  ? 'bg-white scale-115 shadow-[0_0_10px_rgba(255,255,255,0.9)]'
                   : 'bg-transparent hover:bg-white/40'
               }`}
             />
@@ -327,4 +366,3 @@ export default function Hero() {
     </section>
   );
 }
-
