@@ -133,9 +133,9 @@ export default function Header() {
       ],
     },
     {
-      id: 'contacts',
-      label: t.nav.contacts,
-      path: '/contacts',
+      id: 'our-people',
+      label: t.nav.ourPeople,
+      path: '/our-people',
     },
   ];
 
@@ -394,13 +394,13 @@ export default function Header() {
                 )}
               </div>
 
-              {/* BaselArea.swiss Pill CTA Button ("Contact us") */}
+              {/* BaselArea.swiss Pill CTA Button ("Contacts") */}
               <Link
                 to="/contacts"
                 className="basel-right-item hidden sm:inline-flex items-center gap-2.5 rounded-full bg-[#267312] hover:bg-[#2f8c17] text-white font-medium text-[15px] xl:text-[16px] px-5 xl:px-6 py-2.5 shadow-[0_6px_18px_rgba(34,102,15,0.45)] hover:shadow-[0_8px_22px_rgba(47,140,23,0.65)] transition-all duration-300 group"
               >
                 <span className="relative">
-                  {lang === 'ar' ? 'تواصل معنا' : 'Contact us'}
+                  {t.nav.contacts}
                   <span className="block h-[1.5px] w-0 group-hover:w-full bg-white transition-all duration-300" />
                 </span>
                 <svg
@@ -446,7 +446,7 @@ export default function Header() {
             }`}
           >
             <nav className="flex flex-col space-y-1.5">
-              {navItems.map((item) => (
+              {[...navItems, { id: 'contacts', label: t.nav.contacts, path: '/contacts' }].map((item) => (
                 <NavLink
                   key={item.id}
                   to={item.path}

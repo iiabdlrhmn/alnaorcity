@@ -140,6 +140,7 @@ export default function Footer() {
               { label: t.nav.home, path: '/' },
               { label: t.nav.products, path: '/products' },
               { label: t.nav.company, path: '/company' },
+              { label: t.nav.ourPeople, path: '/our-people' },
               { label: t.nav.contacts, path: '/contacts' },
             ].map((item) => (
               <Link

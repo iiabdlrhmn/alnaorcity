@@ -54,6 +54,10 @@ function AppContent() {
             path="/contacts"
             element={<PlaceholderPage title={t.nav.contacts} />}
           />
+          <Route
+            path="/our-people"
+            element={<PlaceholderPage title={t.nav.ourPeople} />}
+          />
         </Routes>
       </div>
       <Footer />
@@ -70,4 +74,3 @@ export default function App() {
     </LanguageProvider>
   );
 }
-

@@ -9,6 +9,7 @@ export const translations = {
       products: 'Our Products',
       company: 'Our Company',
       contacts: 'Contacts',
+      ourPeople: 'Our People',
       languageLabel: 'Language',
     },
     hero: {
@@ -52,6 +53,7 @@ export const translations = {
       products: 'منتجاتنا',
       company: 'شركتنا',
       contacts: 'اتصل بنا',
+      ourPeople: 'فريقنا',
       languageLabel: 'اللغة',
     },
     hero: {
