@@ -18,12 +18,12 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredDropdown, setHoveredDropdown] = useState(null);
 
-  // Close menus on route change
+  // Close menus on route or hash change
   useEffect(() => {
     setMobileMenuOpen(false);
     setHoveredDropdown(null);
     setLangMenuOpen(false);
-  }, [location.pathname]);
+  }, [location.pathname, location.hash]);
 
   // BaselArea.swiss Headroom behavior (hide on scroll down, show on scroll up)
   useEffect(() => {
@@ -115,20 +115,28 @@ export default function Header() {
       path: '/company',
       subItems: [
         {
-          title: lang === 'ar' ? 'جذور عراقية . وصول عالمي' : 'Iraqi Roots. Global Reach.',
+          title: lang === 'ar' ? 'تاريخ الشركة' : 'Company History',
           desc:
             lang === 'ar'
-              ? 'قصة شركة مدينة الناعور للتجارة العامة المحدودة'
-              : 'The story of Al-Naour City General Trading Co.',
-          path: '/company',
+              ? 'مسيرتنا منذ التأسيس عام ١٩٩٧ وحتى التوسع الإقليمي'
+              : 'Our journey since 1997 in Jamila Industrial Area',
+          path: '/company#history',
         },
         {
-          title: lang === 'ar' ? 'معايير الجودة' : 'Quality & Standards',
+          title: lang === 'ar' ? 'رؤيتنا ومهمتنا' : 'Our Vision & Mission',
           desc:
             lang === 'ar'
-              ? 'التزامنا بأعلى معايير الجودة الغذائية العالمية'
-              : 'Our commitment to world-class food trading standards',
-          path: '/company',
+              ? 'تطلعاتنا المستقبلية ورسالتنا في بناء العلامات التجارية'
+              : 'Connecting local brand innovation with regional markets',
+          path: '/company#vision-mission',
+        },
+        {
+          title: lang === 'ar' ? 'أهداف العمل والركائز' : 'Business Goals & Objectives',
+          desc:
+            lang === 'ar'
+              ? 'الركائز الست للنمو المستدام والريادة في السوق'
+              : 'Six strategic pillars driving sustainable growth',
+          path: '/company#goals',
         },
       ],
     },
@@ -259,6 +267,21 @@ export default function Header() {
                                 <li key={sIdx}>
                                   <Link
                                     to={sub.path}
+                                    onClick={() => {
+                                      setHoveredDropdown(null);
+                                      if (sub.path.includes('#')) {
+                                        const id = sub.path.split('#')[1];
+                                        setTimeout(() => {
+                                          const el = document.getElementById(id);
+                                          if (el) {
+                                            el.scrollIntoView({
+                                              behavior: 'smooth',
+                                              block: 'start',
+                                            });
+                                          }
+                                        }, 80);
+                                      }
+                                    }}
                                     className="group/sub flex items-center justify-between gap-4 rounded-xl p-3.5 hover:bg-[#f6f0fa] transition-colors duration-200"
                                   >
                                     <div className="flex items-center gap-3.5">

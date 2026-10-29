@@ -7,6 +7,7 @@ import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
+import OurCompany from './pages/OurCompany';
 import PlaceholderPage from './pages/PlaceholderPage';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -48,7 +49,7 @@ function AppContent() {
           />
           <Route
             path="/company"
-            element={<PlaceholderPage title={t.nav.company} />}
+            element={<OurCompany />}
           />
           <Route
             path="/contacts"
