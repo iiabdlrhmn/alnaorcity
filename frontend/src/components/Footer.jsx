@@ -39,9 +39,10 @@ export default function Footer() {
     { scope: footerRef }
   );
 
-  // Cursor-following ambient glow inside footer
+  // Cursor-following ambient glow inside footer (desktop hover devices only)
   const handleFooterMouseMove = (e) => {
     if (!footerRef.current || !glowRef.current) return;
+    if (typeof window !== 'undefined' && !window.matchMedia('(hover: hover)').matches) return;
     const rect = footerRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -49,14 +50,17 @@ export default function Footer() {
     gsap.to(glowRef.current, {
       x: x - 220,
       y: y - 220,
-      duration: 0.6,
+      duration: 0.5,
       ease: 'power2.out',
+      overwrite: 'auto',
+      force3D: true,
     });
   };
 
   // Subtle 3D tilt on the map card when not in interactive pan mode
   const handleMapMouseMove = (e) => {
     if (mapInteractive || !mapCardRef.current) return;
+    if (typeof window !== 'undefined' && !window.matchMedia('(hover: hover)').matches) return;
     const rect = mapCardRef.current.getBoundingClientRect();
     const relX = (e.clientX - rect.left) / rect.width - 0.5;
     const relY = (e.clientY - rect.top) / rect.height - 0.5;
@@ -65,8 +69,10 @@ export default function Footer() {
       rotateY: relX * 8,
       rotateX: -relY * 8,
       transformPerspective: 900,
-      duration: 0.4,
+      duration: 0.35,
       ease: 'power2.out',
+      overwrite: 'auto',
+      force3D: true,
     });
   };
 

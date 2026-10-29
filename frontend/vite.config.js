@@ -11,6 +11,19 @@ export default defineConfig({
       '@assets': path.resolve(__dirname, './assets'),
     },
   },
+  build: {
+    target: 'es2020',
+    cssCodeSplit: true,
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'animation-vendor': ['gsap', '@gsap/react', 'lenis'],
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
     open: false,

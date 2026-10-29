@@ -91,21 +91,29 @@ export default function Header() {
       path: '/products',
       subItems: [
         {
-          title: lang === 'ar' ? 'شاي الخان الملكي' : 'Al-Khan Royal Tea',
+          title: lang === 'ar' ? 'شاي الخان الفاخر والمنكه' : 'Al-Khan Loose & Flavored Tea',
           desc:
             lang === 'ar'
-              ? 'كل ورقة شاي مختارة تصنع فرق الجودة'
-              : 'Every selected tea leaf defines the quality',
-          path: '/products',
+              ? '١٥ منتجاً بالهيل، الورد الأزرق، الورد الوردي، والخلطة الذهبية'
+              : '15 blends with Cardamom, Blue Rose, Pink Rose & Golden Tea',
+          path: '/products#tea',
           featuredImg: canImg,
         },
         {
-          title: lang === 'ar' ? 'تشكيلة الشاي الفاخر' : 'Premium Tea Selection',
+          title: lang === 'ar' ? 'مجموعة شاي الكرك' : 'Al-Khan Karak Tea Collection',
           desc:
             lang === 'ar'
-              ? 'أجود أوراق الشاي السيلاني المختارة بعناية'
-              : 'Finest hand-picked Ceylon & global tea blends',
-          path: '/products',
+              ? '٩ منتجات بالزعفران، الهيل، القرفة، والشوكولاتة الساخنة'
+              : '9 blends with Saffron, Cardamom, Cinnamon & Hot Chocolate',
+          path: '/products#karak',
+        },
+        {
+          title: lang === 'ar' ? 'زيت الزيتون ونخالة الأرز وبوبا' : 'Olive Oil, Rice Bran Oil & Boba Tea',
+          desc:
+            lang === 'ar'
+              ? 'تشكيلة الزيوت الصحية النقية وشاي الفقاعات الجاهز'
+              : 'Pure Aegean Olive Oil, Rice Bran Oil & Brown Sugar Boba Tea',
+          path: '/products#oils',
         },
       ],
     },
@@ -137,6 +145,14 @@ export default function Header() {
               ? 'الركائز الست للنمو المستدام والريادة في السوق'
               : 'Six strategic pillars driving sustainable growth',
           path: '/company#goals',
+        },
+        {
+          title: lang === 'ar' ? 'المزيد عنا (علاماتنا)' : 'More of Us',
+          desc:
+            lang === 'ar'
+              ? 'العلامات التجارية والشركات المملوكة لمدينة الناعور'
+              : 'Sister brands and companies owned by Al-Naour City',
+          path: '/company#more-of-us',
         },
       ],
     },

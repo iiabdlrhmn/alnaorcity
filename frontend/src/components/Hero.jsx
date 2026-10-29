@@ -6,6 +6,7 @@ import canImg from '@assets/photos/can.png';
 import bgLeavesImg from '@assets/photos/fresh-green-tea-leaves-lush-plantation.jpg';
 import secondPhotoImg from '@assets/photos/second_photo.jpg';
 import thirdPhotoImg from '@assets/photos/third_photo.jpg';
+import fourthPhotoImg from '@assets/photos/PHOTO-2026-05-01-23-31-21.jpg';
 import taglineMapImg from '@assets/photos/taglinewithmap.png';
 
 gsap.registerPlugin(Draggable);
@@ -26,6 +27,11 @@ const SLIDES = [
     image: thirdPhotoImg,
     alt: 'Al-Khan Tea Team & Community Reach',
   },
+  {
+    id: 3,
+    image: fourthPhotoImg,
+    alt: 'Al-Naour City & Al-Khan Tea Full Team',
+  },
 ];
 
 const AUTO_CYCLE_MS = 5000;
@@ -39,12 +45,15 @@ export default function Hero() {
   const mapWrapperRef = useRef(null);
   const returnTimerRef = useRef(null);
   const floatTweenRef = useRef(null);
+  const shadowTweenRef = useRef(null);
+  const mapQuickXRef = useRef(null);
+  const mapQuickYRef = useRef(null);
 
   const [activeSlide, setActiveSlide] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [isWaitingToReturn, setIsWaitingToReturn] = useState(false);
 
-  // Transition between the 3 background photos while keeping Tea Can & Iraq Map on top
+  // Transition between the 4 background photos while keeping Tea Can & Iraq Map on top
   const goToSlide = useCallback(
     (nextIndex) => {
       if (nextIndex === activeSlide) return;
@@ -52,13 +61,13 @@ export default function Hero() {
       const prevImg = slideImgRefs.current[activeSlide];
       const nextImg = slideImgRefs.current[nextIndex];
 
-      // Crossfade & subtle Ken Burns effect on background images
       if (prevImg) {
         gsap.to(prevImg, {
           opacity: 0,
-          scale: 1.08,
-          duration: 1.2,
+          scale: 1.07,
+          duration: 1.15,
           ease: 'power2.inOut',
+          force3D: true,
           overwrite: 'auto',
         });
       }
@@ -66,12 +75,13 @@ export default function Hero() {
       if (nextImg) {
         gsap.fromTo(
           nextImg,
-          { opacity: 0, scale: 1.12 },
+          { opacity: 0, scale: 1.1 },
           {
             opacity: 1,
             scale: 1.02,
-            duration: 1.4,
+            duration: 1.35,
             ease: 'power2.out',
+            force3D: true,
             overwrite: 'auto',
           }
         );
@@ -84,63 +94,100 @@ export default function Hero() {
 
   useGSAP(
     () => {
-      // Initialize slide opacities
+      // Initialize slide opacities on GPU layer
       slideImgRefs.current.forEach((img, idx) => {
         if (!img) return;
         gsap.set(img, {
           opacity: idx === 0 ? 1 : 0,
-          scale: idx === 0 ? 1.03 : 1.1,
+          scale: idx === 0 ? 1.03 : 1.09,
+          force3D: true,
         });
       });
 
+      // Pooled quickTo setters for zero-lag mouse parallax
+      if (mapWrapperRef.current) {
+        mapQuickXRef.current = gsap.quickTo(mapWrapperRef.current, 'x', {
+          duration: 0.8,
+          ease: 'power2.out',
+        });
+        mapQuickYRef.current = gsap.quickTo(mapWrapperRef.current, 'y', {
+          duration: 0.8,
+          ease: 'power2.out',
+        });
+      }
+
       // 1. Entrance animations
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out', force3D: true } });
 
       tl.fromTo(
         slideImgRefs.current[0],
-        { scale: 1.14, filter: 'brightness(0.7)' },
-        { scale: 1.02, filter: 'brightness(1)', duration: 2.0, ease: 'power2.out' }
+        { scale: 1.12 },
+        { scale: 1.02, duration: 1.8, ease: 'power2.out' }
       )
         .fromTo(
           canWrapperRef.current,
-          { y: 70, opacity: 0, scale: 0.88 },
-          { y: 0, opacity: 1, scale: 1, duration: 1.1, ease: 'back.out(1.4)' },
-          '-=1.5'
+          { y: 60, opacity: 0, scale: 0.9 },
+          { y: 0, opacity: 1, scale: 1, duration: 1.0, ease: 'back.out(1.4)' },
+          '-=1.4'
         )
         .fromTo(
           mapWrapperRef.current,
-          { x: 50, opacity: 0, scale: 0.94 },
-          { x: 0, opacity: 1, scale: 1, duration: 1.1 },
-          '-=0.9'
+          { x: 40, opacity: 0, scale: 0.95 },
+          { x: 0, opacity: 1, scale: 1, duration: 1.0 },
+          '-=0.85'
         )
         .fromTo(
           '.hero-dot',
-          { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5, stagger: 0.1 },
-          '-=0.6'
+          { y: 16, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.45, stagger: 0.08 },
+          '-=0.55'
         );
 
       // 2. Continuous gentle floating idle animation on the inner jar
       floatTweenRef.current = gsap.to(canInnerRef.current, {
-        y: -12,
-        rotation: 1.2,
+        y: -11,
+        rotation: 1.1,
         duration: 2.4,
         repeat: -1,
         yoyo: true,
         ease: 'sine.inOut',
+        force3D: true,
       });
 
-      gsap.to(shadowRef.current, {
+      shadowTweenRef.current = gsap.to(shadowRef.current, {
         scale: 0.85,
         opacity: 0.35,
         duration: 2.4,
         repeat: -1,
         yoyo: true,
         ease: 'sine.inOut',
+        force3D: true,
       });
+
+      // Pause idle tweens when Hero is scrolled out of viewport
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            if (!isDragging && !isWaitingToReturn) {
+              floatTweenRef.current?.resume();
+              shadowTweenRef.current?.resume();
+            }
+          } else {
+            floatTweenRef.current?.pause();
+            shadowTweenRef.current?.pause();
+          }
+        },
+        { threshold: 0.05 }
+      );
+
+      if (heroRef.current) observer.observe(heroRef.current);
 
       // 3. GSAP Draggable for the Tea Jar with 2.5s auto-return
       let lastX = 0;
+      const rotQuick = gsap.quickTo(canInnerRef.current, 'rotation', {
+        duration: 0.18,
+        ease: 'power2.out',
+      });
 
       const draggableInstance = Draggable.create(canWrapperRef.current, {
         type: 'x,y',
@@ -156,29 +203,24 @@ export default function Hero() {
           setIsDragging(true);
           setIsWaitingToReturn(false);
 
-          if (floatTweenRef.current) {
-            floatTweenRef.current.pause();
-          }
+          floatTweenRef.current?.pause();
+          shadowTweenRef.current?.pause();
 
           lastX = this.x;
 
           gsap.to(canInnerRef.current, {
             scale: 1.06,
             y: 0,
-            duration: 0.25,
+            duration: 0.22,
             ease: 'power2.out',
+            force3D: true,
           });
         },
         onDrag() {
           const deltaX = this.x - lastX;
           lastX = this.x;
           const clampedTilt = gsap.utils.clamp(-14, 14, deltaX * 0.75);
-
-          gsap.to(canInnerRef.current, {
-            rotation: clampedTilt,
-            duration: 0.2,
-            overwrite: 'auto',
-          });
+          rotQuick(clampedTilt);
         },
         onRelease() {
           setIsDragging(false);
@@ -186,19 +228,22 @@ export default function Hero() {
           gsap.to(canInnerRef.current, {
             rotation: 0,
             scale: 1.02,
-            duration: 0.4,
+            duration: 0.35,
             ease: 'power2.out',
+            force3D: true,
           });
 
           if (Math.abs(this.x) < 4 && Math.abs(this.y) < 4) {
             gsap.to(canWrapperRef.current, {
               x: 0,
               y: 0,
-              duration: 0.4,
+              duration: 0.35,
               ease: 'power2.out',
+              force3D: true,
             });
-            gsap.to(canInnerRef.current, { scale: 1, duration: 0.3 });
-            if (floatTweenRef.current) floatTweenRef.current.resume();
+            gsap.to(canInnerRef.current, { scale: 1, duration: 0.25 });
+            floatTweenRef.current?.resume();
+            shadowTweenRef.current?.resume();
             return;
           }
 
@@ -213,24 +258,26 @@ export default function Hero() {
               y: 0,
               duration: 1.15,
               ease: 'elastic.out(1, 0.68)',
+              force3D: true,
               onComplete: () => {
-                if (floatTweenRef.current) {
-                  floatTweenRef.current.resume();
-                }
+                floatTweenRef.current?.resume();
+                shadowTweenRef.current?.resume();
               },
             });
 
             gsap.to(canInnerRef.current, {
               scale: 1,
               rotation: 0,
-              duration: 0.7,
+              duration: 0.65,
               ease: 'power3.out',
+              force3D: true,
             });
           }, 2500);
         },
       });
 
       return () => {
+        observer.disconnect();
         if (returnTimerRef.current) clearTimeout(returnTimerRef.current);
         if (draggableInstance[0]) draggableInstance[0].kill();
       };
@@ -238,7 +285,7 @@ export default function Hero() {
     { scope: heroRef }
   );
 
-  // Automatic cycling across all 3 photos
+  // Automatic cycling across all 4 photos
   useEffect(() => {
     const timer = setTimeout(() => {
       const next = (activeSlide + 1) % SLIDES.length;
@@ -248,47 +295,37 @@ export default function Hero() {
     return () => clearTimeout(timer);
   }, [activeSlide, goToSlide]);
 
-  // Subtle mouse-move parallax for active background and map outline
+  // High-performance mouse-move parallax using pooled quickTo setters (desktop only)
   const handleMouseMove = (e) => {
-    if (!heroRef.current) return;
+    if (!heroRef.current || !mapQuickXRef.current || !mapQuickYRef.current) return;
+    if (typeof window !== 'undefined' && !window.matchMedia('(hover: hover)').matches) {
+      return;
+    }
+
     const rect = heroRef.current.getBoundingClientRect();
     const relX = (e.clientX - rect.left) / rect.width - 0.5;
     const relY = (e.clientY - rect.top) / rect.height - 0.5;
 
-    const currentBg = slideImgRefs.current[activeSlide];
-    if (currentBg) {
-      gsap.to(currentBg, {
-        x: relX * -16,
-        y: relY * -16,
-        duration: 1.2,
-        ease: 'power2.out',
-      });
-    }
-
-    if (mapWrapperRef.current) {
-      gsap.to(mapWrapperRef.current, {
-        x: relX * 16,
-        y: relY * 12,
-        duration: 1.0,
-        ease: 'power2.out',
-      });
-    }
+    mapQuickXRef.current(relX * 16);
+    mapQuickYRef.current(relY * 12);
   };
 
   return (
     <section
       ref={heroRef}
       onMouseMove={handleMouseMove}
-      className="relative w-full h-[640px] sm:h-[700px] lg:h-[780px] pt-24 sm:pt-28 overflow-hidden select-none bg-[#0d2607]"
+      className="relative w-full min-h-[580px] h-[640px] sm:h-[700px] lg:h-[780px] pt-24 sm:pt-28 overflow-hidden select-none bg-[#0d2607]"
     >
-      {/* 3 Background Slide Photos */}
+      {/* 4 Background Slide Photos */}
       {SLIDES.map((slide, idx) => (
         <img
           key={slide.id}
           ref={(el) => (slideImgRefs.current[idx] = el)}
           src={slide.image}
           alt={slide.alt}
-          className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none will-change-transform"
+          fetchPriority={idx === 0 ? 'high' : 'low'}
+          decoding="async"
+          className="gpu-accelerated absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
           draggable={false}
         />
       ))}
@@ -303,19 +340,21 @@ export default function Hero() {
       />
 
       {/* Foreground Content Always on Top: Draggable Tea Jar + Iraq Map Outline */}
-      <div className="relative z-20 max-w-[1400px] mx-auto w-full h-full flex flex-col md:flex-row items-center justify-between px-6 sm:px-12 lg:px-20">
+      <div className="relative z-20 max-w-[1400px] mx-auto w-full h-full flex flex-col md:flex-row items-center justify-between px-4 sm:px-10 lg:px-20">
         {/* Left: Draggable Al-Khan Tea Jar */}
-        <div className="relative flex items-center justify-center md:w-[42%] h-full pt-4 md:pt-0">
+        <div className="relative flex items-center justify-center md:w-[42%] h-1/2 md:h-full pt-2 md:pt-0">
           <div
             ref={canWrapperRef}
-            className="relative z-20 cursor-grab active:cursor-grabbing touch-none flex flex-col items-center group"
+            className="gpu-accelerated relative z-20 cursor-grab active:cursor-grabbing touch-none flex flex-col items-center group"
             title="Drag me around!"
           >
-            <div ref={canInnerRef} className="relative will-change-transform">
+            <div ref={canInnerRef} className="gpu-accelerated relative">
               <img
                 src={canImg}
                 alt="Al-Khan Tea - شاي الخان"
-                className="w-[185px] sm:w-[230px] lg:w-[275px] xl:w-[295px] h-auto object-contain drop-shadow-[0_22px_32px_rgba(0,0,0,0.65)] select-none pointer-events-none"
+                fetchPriority="high"
+                decoding="async"
+                className="w-[155px] sm:w-[215px] lg:w-[270px] xl:w-[295px] h-auto object-contain drop-shadow-[0_18px_26px_rgba(0,0,0,0.6)] select-none pointer-events-none"
                 draggable={false}
               />
             </div>
@@ -323,29 +362,31 @@ export default function Hero() {
             {/* Contact shadow under the tea tin */}
             <div
               ref={shadowRef}
-              className="w-[72%] h-5 bg-black/55 blur-md rounded-full -mt-3 pointer-events-none"
+              className="gpu-accelerated w-[72%] h-4 bg-black/55 blur-sm rounded-full -mt-2.5 pointer-events-none"
             />
           </div>
         </div>
 
         {/* Right: Iraq Map Outline & Tagline ("Iraqi Roots. Global Reach. / جذور عراقية . وصول عالمي") */}
-        <div className="relative flex items-center justify-center md:w-[58%] h-full pb-12 md:pb-0">
+        <div className="relative flex items-center justify-center md:w-[58%] h-1/2 md:h-full pb-12 md:pb-0">
           <div
             ref={mapWrapperRef}
-            className="relative w-full max-w-[540px] lg:max-w-[660px] xl:max-w-[730px] pointer-events-none will-change-transform"
+            className="gpu-accelerated relative w-full max-w-[340px] sm:max-w-[500px] lg:max-w-[660px] xl:max-w-[730px] pointer-events-none"
           >
             <img
               src={taglineMapImg}
               alt="Iraqi Roots. Global Reach. - جذور عراقية . وصول عالمي"
-              className="w-full h-auto object-contain mix-blend-screen drop-shadow-[0_4px_18px_rgba(0,0,0,0.45)]"
+              fetchPriority="high"
+              decoding="async"
+              className="w-full h-auto object-contain mix-blend-screen"
               draggable={false}
             />
           </div>
         </div>
       </div>
 
-      {/* Bottom Center Slider Dots (● ○ ○) */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3.5">
+      {/* Bottom Center Slider Dots (● ○ ○ ○) */}
+      <div className="absolute bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3.5">
         {SLIDES.map((slide, idx) => {
           const isActive = activeSlide === idx;
           return (

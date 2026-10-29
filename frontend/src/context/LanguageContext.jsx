@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const LanguageContext = createContext();
 
@@ -121,6 +121,100 @@ export const translations = {
         ],
       },
     },
+    teamPage: {
+      badge: 'LEADERSHIP & DIRECTORY',
+      title: 'Our People',
+      subtitle:
+        'Meet the executive leadership and management team driving Al-Naour City’s growth across Iraq and regional markets.',
+      filters: {
+        all: 'All Leadership (6)',
+        executive: 'Executive Board',
+        commercial: 'Sales & Accounts',
+        operations: 'Admin & Marketing',
+      },
+      actions: {
+        call: 'Call Direct',
+        whatsapp: 'WhatsApp',
+        copy: 'Copy Number',
+        copied: 'Copied ✓',
+        vcard: 'Save Contact (.vcf)',
+        selectHint: 'Click or hover any leader to preview their interactive digital business card',
+      },
+      members: [
+        {
+          id: 'sayed-riyadh',
+          name: 'Sayed Riyadh',
+          role: 'Founder and Chairman',
+          department: 'executive',
+          deptLabel: 'Executive Board',
+          phone: '+964 770 340 5921',
+          email: 'riyadhugla@gmail.com',
+          initials: 'SR',
+          tier: 'founder',
+          bio: 'Visionary founder of Al-Naour City (established in 1997 as Sayed Ugla Office), guiding strategic direction and long-term regional expansion.',
+        },
+        {
+          id: 'sayed-ali',
+          name: 'Sayed Ali Ugla',
+          role: 'Co-Founder and CEO',
+          department: 'executive',
+          deptLabel: 'Executive Board',
+          phone: '+964 770 075 9986',
+          email: 'alibshat4@gmail.com',
+          initials: 'SA',
+          tier: 'founder',
+          bio: 'Leading the transformation into FMCG, flagship brand development including Al-Khan Tea, and international brand partnerships.',
+        },
+        {
+          id: 'haider-qassim',
+          name: 'Haider Qassim',
+          role: 'National Sales Manager',
+          department: 'commercial',
+          deptLabel: 'Sales & Distribution',
+          phone: '+964 772 136 2642',
+          email: 'info@alnaorcity.com',
+          initials: 'HQ',
+          tier: 'management',
+          bio: 'Spearheading nationwide sales strategy, distribution networks, and market penetration across all Iraqi governorates.',
+        },
+        {
+          id: 'muhannad-al-humam',
+          name: 'Muhannad Al Humam',
+          role: 'Admin Manager',
+          department: 'operations',
+          deptLabel: 'Administration & Operations',
+          phone: '+964 770 255 4955',
+          email: 'info@alnaorcity.com',
+          initials: 'MH',
+          tier: 'management',
+          bio: 'Overseeing corporate administration, organizational efficiency, and daily operational excellence at headquarters.',
+        },
+        {
+          id: 'abbas-alobaidi',
+          name: 'Abbas Alobaidi',
+          role: 'Account Manager',
+          department: 'commercial',
+          deptLabel: 'Key Accounts & Relations',
+          phone: '+964 774 440 0108',
+          email: 'info@alnaorcity.com',
+          initials: 'AA',
+          tier: 'management',
+          bio: 'Managing strategic client accounts, wholesale partner relationships, and commercial growth initiatives.',
+        },
+        {
+          id: 'ali-al-obaidi',
+          name: 'Ali Al-Obaidi',
+          role: 'Marketing and Communication Consultant',
+          department: 'operations',
+          deptLabel: 'Brand & Communications',
+          phone: '+964 771 818 0101',
+          email: 'info@alnaorcity.com',
+          initials: 'AO',
+          tier: 'management',
+          bio: 'Shaping brand positioning, consumer communication strategies, and market presence across local and regional channels.',
+        },
+      ],
+    },
     footer: {
       companyName: 'Al-Naour City General Trading Company Ltd.',
       address: 'Iraq - Baghdad - Jamila Industrial Area - Hussainiyat al-Ansar Street',
@@ -206,12 +300,12 @@ export const translations = {
       },
       vision: {
         tag: 'تطلعاتنا المستقبلية',
-        title: 'رؤيتنا (Our Vision)',
+        title: 'رؤيتنا',
         text: 'أن نصبح شركة إقليمية رائدة في بناء العلامات التجارية المحلية وربط العلامات التجارية العالمية بالأسواق في جميع أنحاء المنطقة.',
       },
       mission: {
         tag: 'رسالتنا الأساسية',
-        title: 'مهمتنا (Our Mission)',
+        title: 'مهمتنا',
         text: 'تطوير علامات تجارية محلية مميزة، وتمثيل علامات تجارية عالمية موثوقة، وتقديم منتجات عالية الجودة تلبي احتياجات السوق من خلال فهم عميق للمستهلكين والالتزام بالنمو المستدام.',
       },
       goalsSection: {
@@ -222,36 +316,130 @@ export const translations = {
         items: [
           {
             num: '01',
-            title: 'تطوير العلامات التجارية (Brand Development)',
+            title: 'تطوير العلامات التجارية',
             desc: 'بناء وتنمية محفظة قوية من العلامات التجارية المحلية المميزة التي تستجيب لاحتياجات المستهلكين المتطورة.',
           },
           {
             num: '02',
-            title: 'التوسع في الأسواق (Market Expansion)',
+            title: 'التوسع في الأسواق',
             desc: 'تعزيز حضور الشركة في العراق والتوسع نحو أسواق إقليمية مختارة.',
           },
           {
             num: '03',
-            title: 'الشراكات الدولية (International Partnerships)',
+            title: 'الشراكات الدولية',
             desc: 'إقامة شراكات استراتيجية مع علامات تجارية عالمية مرموقة لتقديم منتجات عالية الجودة للأسواق المحلية والإقليمية.',
           },
           {
             num: '04',
-            title: 'تنويع المحفظة (Portfolio Diversification)',
+            title: 'تنويع المحفظة',
             desc: 'التوسع عبر فئات الأغذية والمشروبات المتكاملة لتلبية نطاق أوسع من فرص السوق.',
           },
           {
             num: '05',
-            title: 'ريادة السوق (Market Leadership)',
+            title: 'ريادة السوق',
             desc: 'بناء مزايا تنافسية من خلال جودة المنتج، وفهم المستهلك، والتموضع الفعال في السوق.',
           },
           {
             num: '06',
-            title: 'النمو المستدام (Sustainable Growth)',
+            title: 'النمو المستدام',
             desc: 'تطوير عمليات تجارية قابلة للتوسع تدعم النمو طويل الأمد والكفاءة التشغيلية والقيمة المستدامة.',
           },
         ],
       },
+    },
+    teamPage: {
+      badge: 'القيادة وفريق العمل',
+      title: 'فريقنا',
+      subtitle:
+        'تعرف على القيادة التنفيذية وفريق الإدارة الذي يقود نمو شركة مدينة الناعور في العراق والأسواق الإقليمية.',
+      filters: {
+        all: 'جميع القادة (6)',
+        executive: 'مجلس الإدارة والتأسيس',
+        commercial: 'المبيعات والحسابات',
+        operations: 'الإدارة والتسويق',
+      },
+      actions: {
+        call: 'اتصال مباشر',
+        whatsapp: 'واتساب',
+        copy: 'نسخ الرقم',
+        copied: 'تم النسخ ✓',
+        vcard: 'حفظ جهة الاتصال',
+        selectHint: 'اضغط أو مرر المؤشر على أي عضو لعرض بطاقة الأعمال الرقمية التفاعلية',
+      },
+      members: [
+        {
+          id: 'sayed-riyadh',
+          name: 'سيد رياض',
+          role: 'المؤسس ورئيس مجلس الإدارة',
+          department: 'executive',
+          deptLabel: 'مجلس الإدارة التنفيذي',
+          phone: '+964 770 340 5921',
+          email: 'riyadhugla@gmail.com',
+          initials: 'SR',
+          tier: 'founder',
+          bio: 'المؤسس الرائد لشركة مدينة الناعور منذ انطلاقتها عام ١٩٩٧ كمكتب سيد عقلة، ويقود الرؤية الاستراتيجية والتوسع الإقليمي طويل الأمد.',
+        },
+        {
+          id: 'sayed-ali',
+          name: 'سيد علي عقلة',
+          role: 'الشريك المؤسس والرئيس التنفيذي',
+          department: 'executive',
+          deptLabel: 'مجلس الإدارة التنفيذي',
+          phone: '+964 770 075 9986',
+          email: 'alibshat4@gmail.com',
+          initials: 'SA',
+          tier: 'founder',
+          bio: 'يقود التحول الاستراتيجي نحو قطاع السلع الاستهلاكية وتطوير العلامات التجارية الرائدة وفي مقدمتها شاي الخان والشراكات الدولية.',
+        },
+        {
+          id: 'haider-qassim',
+          name: 'حيدر قاسم',
+          role: 'مدير المبيعات الوطني',
+          department: 'commercial',
+          deptLabel: 'المبيعات والتوزيع',
+          phone: '+964 772 136 2642',
+          email: 'info@alnaorcity.com',
+          initials: 'HQ',
+          tier: 'management',
+          bio: 'يشرف على استراتيجية المبيعات الوطنية وشبكات التوزيع والانتشار التجاري في كافة محافظات العراق.',
+        },
+        {
+          id: 'muhannad-al-humam',
+          name: 'مهند الهمام',
+          role: 'المدير الإداري',
+          department: 'operations',
+          deptLabel: 'الإدارة والعمليات',
+          phone: '+964 770 255 4955',
+          email: 'info@alnaorcity.com',
+          initials: 'MH',
+          tier: 'management',
+          bio: 'يدير الشؤون الإدارية والتنظيمية ويعزز الكفاءة التشغيلية اليومية في المقر الرئيسي للشركة.',
+        },
+        {
+          id: 'abbas-alobaidi',
+          name: 'عباس العبيدي',
+          role: 'مدير الحسابات',
+          department: 'commercial',
+          deptLabel: 'إدارة الحسابات والعلاقات التجارية',
+          phone: '+964 774 440 0108',
+          email: 'info@alnaorcity.com',
+          initials: 'AA',
+          tier: 'management',
+          bio: 'يتولى إدارة حسابات العملاء الاستراتيجيين وعلاقات شركاء الجملة وتطوير الفرص التجارية.',
+        },
+        {
+          id: 'ali-al-obaidi',
+          name: 'علي العبيدي',
+          role: 'مستشار التسويق والاتصال',
+          department: 'operations',
+          deptLabel: 'التسويق والاتصال المؤسسي',
+          phone: '+964 771 818 0101',
+          email: 'info@alnaorcity.com',
+          initials: 'AO',
+          tier: 'management',
+          bio: 'يقود استراتيجيات التموضع التسويقي للعلامات التجارية والاتصال المتكامل مع المستهلكين في الأسواق المحلية والإقليمية.',
+        },
+      ],
     },
     footer: {
       companyName: 'شركة مدينة الناعور للتجارة العامة المحدودة',
@@ -270,7 +458,23 @@ export const translations = {
 };
 
 export function LanguageProvider({ children }) {
-  const [lang, setLang] = useState('en');
+  const [lang, setLang] = useState(() => {
+    try {
+      const saved = localStorage.getItem('alnaorcity_lang');
+      return saved === 'ar' || saved === 'en' ? saved : 'en';
+    } catch {
+      return 'en';
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('alnaorcity_lang', lang);
+      document.documentElement.lang = lang;
+    } catch {
+      // Ignore storage errors in restricted environments
+    }
+  }, [lang]);
 
   const t = translations[lang];
 

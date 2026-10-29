@@ -8,7 +8,54 @@ import warehouseImg from '@assets/photos/Vintage Warehouse Film Photograph.png';
 import bgLeavesImg from '@assets/photos/fresh-green-tea-leaves-lush-plantation.jpg';
 import taglineMapImg from '@assets/photos/taglinewithmap.png';
 
+// Import "also_us" owned brands & companies photos
+import alKhanLogoImg from '@assets/photos/also_us/Al-khan logo.png';
+import alKhanOilImg from '@assets/photos/also_us/Al-Khan Oil.png';
+import alKhanTeaLogoImg from '@assets/photos/also_us/Al-Khan Tea.png';
+import alKhatoonTeaImg from '@assets/photos/also_us/Al-Khatoon Tea.png';
+import bahlolTeaImg from '@assets/photos/also_us/Bahlol Tea.png';
+import duckTeaImg from '@assets/photos/also_us/Duck Tea.png';
+
 gsap.registerPlugin(ScrollTrigger);
+
+const ALSO_US_BRANDS = [
+  {
+    id: 'al-khan-main',
+    image: alKhanLogoImg,
+    enName: 'Al-Khan',
+    arName: 'الخان — مذاق ملكي',
+  },
+  {
+    id: 'al-khan-tea',
+    image: alKhanTeaLogoImg,
+    enName: 'Shai Al-Khan',
+    arName: 'شاي الخان',
+  },
+  {
+    id: 'al-khan-oil',
+    image: alKhanOilImg,
+    enName: 'Al-Khan Oil',
+    arName: 'زيت الخان',
+  },
+  {
+    id: 'al-khatoon-tea',
+    image: alKhatoonTeaImg,
+    enName: 'Al-Khatoon Tea',
+    arName: 'شاي الخاتون',
+  },
+  {
+    id: 'bahlol-tea',
+    image: bahlolTeaImg,
+    enName: 'Bahlol Tea',
+    arName: 'شاي بهلول',
+  },
+  {
+    id: 'duck-tea',
+    image: duckTeaImg,
+    enName: 'Duck Tea',
+    arName: 'شاي البطة',
+  },
+];
 
 export default function OurCompany() {
   const { lang, t } = useLanguage();
@@ -16,6 +63,7 @@ export default function OurCompany() {
   const pageRef = useRef(null);
   const photoCardRef = useRef(null);
   const photoSheenRef = useRef(null);
+  const marqueeTrackRef = useRef(null);
 
   const [activeMilestone, setActiveMilestone] = useState(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -133,6 +181,17 @@ export default function OurCompany() {
           },
         }
       );
+
+      // 5. Non-stop Infinite Marquee Slider for "More of Us"
+      if (marqueeTrackRef.current) {
+        gsap.set(marqueeTrackRef.current, { xPercent: 0 });
+        gsap.to(marqueeTrackRef.current, {
+          xPercent: -50,
+          duration: 22,
+          ease: 'none',
+          repeat: -1,
+        });
+      }
     },
     { scope: pageRef }
   );
@@ -140,6 +199,7 @@ export default function OurCompany() {
   // Interactive 3D tilt & film sheen on the Vintage Warehouse Photograph
   const handlePhotoMouseMove = (e) => {
     if (!photoCardRef.current) return;
+    if (typeof window !== 'undefined' && !window.matchMedia('(hover: hover)').matches) return;
     const rect = photoCardRef.current.getBoundingClientRect();
     const relX = (e.clientX - rect.left) / rect.width - 0.5;
     const relY = (e.clientY - rect.top) / rect.height - 0.5;
@@ -149,8 +209,10 @@ export default function OurCompany() {
       rotateX: -relY * 12,
       scale: 1.015,
       transformPerspective: 1000,
-      duration: 0.4,
+      duration: 0.35,
       ease: 'power2.out',
+      overwrite: 'auto',
+      force3D: true,
     });
 
     if (photoSheenRef.current) {
@@ -158,7 +220,8 @@ export default function OurCompany() {
         x: relX * 140,
         y: relY * 140,
         opacity: 0.35,
-        duration: 0.4,
+        duration: 0.35,
+        overwrite: 'auto',
       });
     }
   };
@@ -509,7 +572,7 @@ export default function OurCompany() {
       ========================================================= */}
       <section
         id="goals"
-        className="op-goals-section scroll-mt-24 relative py-14 sm:py-20 px-4 sm:px-6 lg:px-10 pb-24"
+        className="op-goals-section scroll-mt-24 relative py-14 sm:py-20 px-4 sm:px-6 lg:px-10"
       >
         <div className="max-w-[1380px] mx-auto">
           {/* Section Header */}
@@ -558,6 +621,67 @@ export default function OurCompany() {
                 <div className="mt-7 h-1 w-full bg-white/10 rounded-full overflow-hidden">
                   <div className="h-full w-10 group-hover:w-full bg-gradient-to-r from-[#4A2368] via-[#267312] to-[#66E347] transition-all duration-500 rounded-full" />
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          5. "MORE OF US" NON-STOP INFINITE BRANDS SLIDER (also_us)
+      ========================================================= */}
+      <section
+        id="more-of-us"
+        className="scroll-mt-24 relative py-14 sm:py-20 pb-28 overflow-hidden"
+      >
+        <div className="max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-10 mb-10 text-center">
+          <span className="inline-block rounded-full bg-[#4A2368]/80 border border-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#66E347] mb-3">
+            {lang === 'ar' ? 'علاماتنا وشركاتنا الشقيقة' : 'OUR BRAND FAMILY'}
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-3">
+            {lang === 'ar' ? 'المزيد عنا' : 'More of Us'}
+          </h2>
+          <p className="text-base sm:text-lg text-white/80 font-light max-w-2xl mx-auto">
+            {lang === 'ar'
+              ? 'العلامات التجارية والشركات المملوكة لشركة مدينة الناعور للتجارة العامة المحدودة.'
+              : 'Distinctive consumer brands and sister companies owned by Al-Naour City General Trading Co.'}
+          </p>
+        </div>
+
+        {/* Full-bleed Infinite Marquee Container with dir="ltr" so RTL mode never breaks the loop */}
+        <div dir="ltr" className="relative w-full overflow-hidden py-4">
+          {/* Left & Right Edge Gradient Masks */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-32 bg-gradient-to-r from-[#0f2c09] to-transparent z-10" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-32 bg-gradient-to-l from-[#0f2c09] to-transparent z-10" />
+
+          {/* Non-stop Moving Track: 2 identical halves so xPercent: -50 loops seamlessly */}
+          <div
+            ref={marqueeTrackRef}
+            className="flex items-center w-max will-change-transform"
+          >
+            {[0, 1].map((halfIdx) => (
+              <div
+                key={halfIdx}
+                className="flex items-center gap-6 sm:gap-8 pr-6 sm:pr-8 shrink-0"
+              >
+                {[...ALSO_US_BRANDS, ...ALSO_US_BRANDS].map((brand, idx) => (
+                  <div
+                    key={`${halfIdx}-${brand.id}-${idx}`}
+                    className="group relative w-[230px] sm:w-[270px] h-[175px] sm:h-[200px] shrink-0 rounded-[28px] bg-white/95 hover:bg-white border-2 border-white/30 hover:border-[#66E347] shadow-[0_16px_40px_rgba(0,0,0,0.35)] p-5 flex flex-col items-center justify-between transition-transform duration-300 hover:scale-[1.04]"
+                  >
+                    <div className="flex-1 w-full flex items-center justify-center overflow-hidden">
+                      <img
+                        src={brand.image}
+                        alt={brand.enName}
+                        className="max-h-[105px] sm:max-h-[125px] max-w-[190px] w-auto object-contain transition-transform duration-500 group-hover:scale-110 select-none"
+                        draggable={false}
+                      />
+                    </div>
+                    <span className="text-xs sm:text-sm font-bold tracking-wide text-[#4A2368] group-hover:text-[#22660F] transition-colors mt-2">
+                      {lang === 'ar' ? brand.arName : brand.enName}
+                    </span>
+                  </div>
+                ))}
               </div>
             ))}
           </div>

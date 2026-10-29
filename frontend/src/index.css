@@ -31,11 +31,24 @@
   --color-green-divider: #2A7B1B;
 }
 
+html {
+  -webkit-tap-highlight-color: transparent;
+  text-rendering: optimizeLegibility;
+}
+
 body {
   font-family: var(--font-primary);
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  background-color: #0f2c09;
+}
+
+/* GPU hardware acceleration helper for animated elements */
+.gpu-accelerated {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 /* Custom subtle scrollbars */
@@ -49,4 +62,3 @@ body {
   background: #4A2368;
   border-radius: 4px;
 }
-
