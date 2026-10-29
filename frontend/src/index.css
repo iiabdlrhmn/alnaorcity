@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'MyriadPro';
+  src: url('../assets/fonts/MyriadPro-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MyriadPro';
+  src: url('../assets/fonts/MYRIADPRO-SEMIBOLD.OTF') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MyriadPro';
+  src: url('../assets/fonts/MYRIADPRO-BOLD.OTF') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-primary: 'MyriadPro', 'Poppins', 'Cairo', sans-serif;
+  --color-purple: #4A2368;
+  --color-green-footer: #236810;
+  --color-green-divider: #2A7B1B;
+}
+
+body {
+  font-family: var(--font-primary);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Custom subtle scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #1a4d0c;
+}
+::-webkit-scrollbar-thumb {
+  background: #4A2368;
+  border-radius: 4px;
+}
+
